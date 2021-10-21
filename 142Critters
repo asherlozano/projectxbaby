@@ -1,0 +1,64 @@
+import java.util.*;
+import java.awt.*;
+//Asher Lozano
+//12/2/20
+//CSE 142 Section BK
+//TA Michelle Jose Morris
+//Constructor : Ant sets walk to the walkSouth variable.
+
+// Behavior: 
+//      Color - An Ant is colored Red
+//      Eating - An Ant always eats
+//      Fighting - An Ant always scratchs
+//      Movement - An Ant alternates between moving southAndEast or northAndEast
+//      String - An Ant is displayed by the symbol %
+public class Ant extends Critter {
+
+    private boolean alternateDirection; // Represents the direction to alternate
+    private boolean walk; // Represents if the ant is going southAndEast or northAndEast
+
+    // Constructs a new Ant
+    // Parameters:
+    //      walk = determines the Ants movement
+    public Ant (boolean walkSouth) {
+        walk = walkSouth;
+    }
+
+//Returns the direction. Either south, east, or north
+    public Direction getMove() {
+        alternateDirection = !alternateDirection;
+        if (walk) {
+            if (alternateDirection) {
+                return Direction.SOUTH;
+            } else {
+                return Direction.EAST;
+            }
+        } else {
+            if (alternateDirection) {
+                return Direction.NORTH;
+            } else {
+                return Direction.EAST;
+            }
+        }  
+    }
+
+//Returns eating as true
+    public boolean eat() {
+        return true;
+    }
+
+//Return the Attack Scratch with the parameter opponent which is who the ant is fighting
+    public Attack fight(String opponent) {
+        return Attack.SCRATCH;
+    }
+
+//Returns the color red
+    public Color getColor() {
+        return Color.RED;
+    }
+
+//Returns the Symbol %
+    public String toString() {
+        return "%";
+    }
+}
