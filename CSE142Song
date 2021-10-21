@@ -1,0 +1,132 @@
+//Asher Lozano
+//10/3/20
+//CSE 142
+//TA: Michelle Jose Morris
+//Take-Home Assessment #1
+
+//This program will print the whole song of 
+//There Was an Old Woman Who Swallowed a Fly
+//With a custom sixth verse
+//Song: There Was an Old Woman Who Swallowed a Fly
+
+public class Song {
+    public static void main(String[] args) {
+        drawVerse1();
+        drawVerse2();
+        drawVerse3();
+        drawVerse4();
+        drawVerse5();
+        drawVerse6();
+        drawVerse7();
+    }
+
+//Writes the lines Perhaps...
+    public static void drawPerhaps(){
+      System.out.println("Perhaps she'll die."); 
+    }
+
+//Writes the line I don't know why
+    public static void drawIDK(){
+        System.out.println("I don't know why she swallowed that fly,");
+    }
+
+//Writes the line spider fly
+    public static void drawspiderfly(){
+        System.out.println("She swallowed the spider to catch the fly,");
+    }
+
+//Writes the line bird spider
+    public static void drawbirdspider(){
+        System.out.println("She swallowed the bird to catch the spider,");
+    }
+
+//Writes the line cat bird
+     public static void drawcatbird(){
+        System.out.println("She swallowed the cat to catch the bird,");
+    }
+
+//Writes the line dog cat
+     public static void drawdogcat(){
+        System.out.println("She swallowed the dog to catch the cat,");
+    }
+
+//Calls the last 3 lines of all verses
+    public static void last3lines(){
+        drawIDK();
+        drawPerhaps();
+        System.out.println();
+    }
+    
+//Calls last3lines and adds line spider fly
+    public static void spiderfly2(){
+        drawspiderfly();
+        last3lines();  
+    }
+
+//Calls spiderfly2 and adds line bird spider
+    public static void birdspider2(){
+        drawbirdspider();
+        spiderfly2();
+    }
+
+//Calls birdspider2 and adds line cat bird
+    public static void catbird2(){
+        drawcatbird();
+        birdspider2(); 
+    }
+
+//Calls catbird2 and adds line dog cat
+    public static void dogcat2(){
+        drawdogcat();
+        catbird2();
+    }
+
+//Writes the lines for verse 1
+      public static void drawVerse1(){
+        System.out.println("There was an old woman who swallowed a fly.");
+        last3lines();
+    }
+
+//Writes the lines for verse 2
+    public static void drawVerse2(){
+        System.out.println("There was an old woman who swallowed a spider,");
+        System.out.println("That wriggled and iggled and jiggled inside her.");
+        spiderfly2();
+    }
+
+//Writes the lines for verse 3
+    public static void drawVerse3(){
+        System.out.println("There was an old woman who swallowed a bird,");
+        System.out.println("How absurd to swallow a bird.");
+        birdspider2();
+    }
+
+//Writes the lines for verse 4
+    public static void drawVerse4(){
+        System.out.println("There was an old woman who swallowed a cat,");
+        System.out.println("Imagine that to swallow a cat.");
+        catbird2();
+    }
+
+//Writes the lines for verse 5
+    public static void drawVerse5(){
+        System.out.println("There was an old woman who swallowed a dog,");
+        System.out.println("What a hog to swallow a dog.");
+        dogcat2();
+    }
+
+//Writes the lines for my custom verse 6
+    public static void drawVerse6(){
+        System.out.println("There was an old woman who swallowed a frog,");
+        System.out.println("How can a log swallow a frog");
+        System.out.println("She swallowed the frog to catch the dog,");
+        dogcat2();
+    }
+
+//Writes the lines for verse 7
+    public static void drawVerse7(){
+        System.out.println("There was an old woman who swallowed a horse,");
+        System.out.println("She died of course.");
+    }
+    
+}
