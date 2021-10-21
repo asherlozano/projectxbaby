@@ -1,0 +1,136 @@
+// Asher Lozano
+// 1/23/21
+// CSE 143
+// TA Melody Lam
+
+// This code models a game called EvilHangman where you have to guess the full word one letter 
+// at a time or until u guess too many incorrect letters. But the game is Evil and has multiple
+// words and switches the words after each guess to the words with the biggest family.
+// A family is a group of words that have the same guessed words in the same spot of the word.
+import java.util.*;
+
+public class HangmanManager {
+
+    private int guessesLeft;
+    private Set<String> dictionarySet;
+    private Set<Character> charactersGuessed;
+    private String guessPattern;
+    
+// This is the HangmanManagers constructor with parameters that takes a bunch of words,
+// a length of words, and max amount of guesses.If the length is less than 1 or the max amount
+// of guesses is less than zero throw an IllegalArgumentException.
+// The constructor puts all the words from the bunch of words
+// that are of that certain length. It also creates a pattern with the amount of length dashes.
+    public HangmanManager (Collection<String> dictionary, int length, int max) {
+        if (length < 1 || max < 0) {
+            throw new IllegalArgumentException();
+        }
+        guessesLeft = max;
+        charactersGuessed = new TreeSet<>();
+        guessPattern = "-";
+        for (int i = 0; i < length - 1; i++) {
+            guessPattern += " -";
+        }
+        dictionarySet = new TreeSet<>();
+        for (String word : dictionary) {
+            if (word.length() == length) {
+                dictionarySet.add(word);
+            }
+        }
+    }
+
+// This method words returns the current set of words that are being considered
+    public Set<String> words() {
+        return dictionarySet;
+    }
+
+// This method returns the guesses left that the player has
+    public int guessesLeft() {
+        return guessesLeft; 
+    }
+
+// This method returns the letters the user has guesses
+    public Set<Character> guesses(){
+        return charactersGuessed;
+    }
+
+// This method calculateMap uses the parameter guess to create the pattern and family after 
+// a guess has been made and returns that map
+    private Map<String, Set<String>> calculateMap (char guess) {
+        Map<String, Set<String>> wordMap = new TreeMap<>();
+        for (String word : dictionarySet) {
+            String pattern = "";
+            String seperator = "";
+            for (int i = 0; i < word.length(); i++) {
+                if (word.charAt(i) == guess) {
+                    pattern += seperator + guess;
+                } else {
+                    pattern += seperator + guessPattern.charAt(2 * i);
+                }
+                seperator = " ";
+            }
+            if (!wordMap.containsKey(pattern)){
+                wordMap.put(pattern, new TreeSet<>()); 
+            }
+            wordMap.get(pattern).add(word);
+        }
+        return wordMap;
+    }
+
+// This method biggestFamily uses the parameter wordMap and looks for the biggestFamily of words
+// and sets that as the current pattern
+    private void calculateBiggestFamily (Map<String, Set<String>>wordMap) {
+        int familySize = 0;
+        for(String key : wordMap.keySet()) {
+            Set<String> keySet = wordMap.get(key);
+            if (keySet.size() > familySize) {
+                dictionarySet = keySet;
+                guessPattern = key;
+                familySize = keySet.size();
+            }
+        }
+    }
+
+// This method calculates the guesses left using the parameter guess. Returning occurrences
+// if the guess occurred in the pattern
+    private int calculateGuessesLeft (char guess) {
+        int occurrences = 0;
+        for (int i = 0; i < guessPattern.length(); i+= 2){
+            if (guess == guessPattern.charAt(i)){
+                occurrences++;
+            }
+        }
+        if (occurrences == 0) {
+            guessesLeft--;
+        }
+        return occurrences;
+    }
+
+// This method pattern throws an IllegalStateException if the set of words are empty. And returns
+// the what the pattern looks like after a guess has been made
+    public String pattern(){
+        if (dictionarySet.isEmpty()) {
+            throw new IllegalStateException();
+        }
+        return guessPattern;
+    }
+
+// The record method uses the parameter guess and throws an IllegalStateException if the
+// guessesLeft is less than one or the list of words is empty also the methods throws and
+// IllegalArgumentException if the previous guess was just guessed. The current set of words, 
+// and pattern is updated. The method also adds all the characters guessed, 
+// calculates the biggest family of words and returns the number of occurrences 
+// of the guessed letter.
+    public int record(char guess) {
+        if (guessesLeft < 1 || dictionarySet.isEmpty()) {
+            throw new IllegalStateException();
+        }
+        if (charactersGuessed.contains(guess)) {
+            throw new IllegalArgumentException();
+        }
+        charactersGuessed.add(guess);
+        Map<String, Set<String>> wordMap = calculateMap(guess);
+        calculateBiggestFamily(wordMap);
+        return calculateGuessesLeft(guess);
+    }
+}
