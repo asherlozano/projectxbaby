@@ -1,0 +1,119 @@
+//Asher Lozano
+//10/25/2020
+//CSE 142
+//TA: Michelle Jose Morris
+//Take-Home Assessment #4
+
+//This code will act as a budgeter for the month
+//Telling you your daily and monthly income and expenses
+
+import java.util.*;
+public class Budgeter {
+
+    public static final int DAYS_IN_MONTH = 31;
+     
+    public static void main(String[] args) {
+        Scanner console = new Scanner(System.in);
+        intro();
+        double income = countTotals(console, "income");
+        int mOrD = printMonthOrDay(console);
+        double expenses = countTotals(console, "expense");
+        double iAndE = totals(income, expenses, mOrD);
+        double profit = printProfit(income, expenses, mOrD);
+        
+        
+    }
+
+//prints the intro statement of this assessment
+    public static void intro(){
+        System.out.println("This program asks for your monthly income and");
+        System.out.println("expenses, then tells you your net monthly income.");
+        System.out.println();
+    }
+//counts how much expenses and income totals to
+    public static double countTotals(Scanner console, String money){
+        System.out.print("How many categories of " + money + "? ");
+        int numCategories = console.nextInt();
+        double totals = 0;
+        for(int i = 1; i <= numCategories; i++){
+            System.out.print("    Next " + money + " amount? $");
+            double iOrE = console.nextDouble();
+            totals += iOrE;
+        }
+        System.out.println();
+
+        return totals; 
+    }
+
+//Prints the month or daily expenses
+    public static int printMonthOrDay(Scanner console){
+        System.out.print("Enter 1) monthly or 2) daily expenses? ");
+
+        int mOrD = console.nextInt();
+
+        return mOrD;
+    }
+
+//prints out the total income and expenses per day using the parameters
+//income, expenses, and mOrD
+    public static double totals(double income, double expenses, int mOrD){
+        System.out.println("Total income = $" + income + " ($" + 
+        round2(income/DAYS_IN_MONTH) + "/day)");
+        if(mOrD == 1) {
+            System.out.println("Total expenses = $" + round2(expenses) + " ($" + 
+            round2(expenses/DAYS_IN_MONTH) + "/day)");
+        }else {
+            System.out.println("Total expenses = $" + round2(expenses * DAYS_IN_MONTH) + " ($" + 
+            round2(expenses) + "/day)");
+        }
+        System.out.println();
+//This returns the income variable
+        return income;
+    }
+
+//Prints the profit or loss that you got this month using the parameters
+//income, expenses, and mOrD
+    public static double printProfit(double income, double expenses, int mOrD){
+        double profit = 0;
+        double loss = 0;
+        if (income > expenses && mOrD == 1){
+            profit += (income - expenses);
+            System.out.println("You earned $" + round2(profit) + 
+            " more than you spent this month.");
+        } else if (income < expenses && mOrD == 1){
+            loss += (expenses - income);
+            System.out.println("You spent $" + round2(loss) + " more than you earned this month.");
+        } else if (income > (expenses * DAYS_IN_MONTH) && mOrD == 2){
+             profit += (income - (expenses * DAYS_IN_MONTH));
+            System.out.println("You earned $" + round2(profit) + 
+            " more than you spent this month.");
+        } else if ((expenses * DAYS_IN_MONTH) > income && mOrD == 2) {
+            loss += ((expenses * DAYS_IN_MONTH) - income);
+            System.out.println("You spent $" + round2(loss) + " more than you earned this month.");
+        } else 
+            System.out.println("You spent $0.0 more than you earned this month.");
+            System.out.print("You're a ");
+        if (profit > 250){
+            System.out.println("big saver.");
+            System.out.println("Keep saving and you could buy your dream house.");
+        } else if (profit > 0){
+            System.out.println("saver.");
+            System.out.println("Yes saving each month for a new car.");
+        } else if (loss >= 250){
+            System.out.println("big spender.");
+            System.out.println("Stop buying so many shoes every month!");
+        } else {
+            System.out.println("spender.");
+            System.out.println("You need to start saving and not spending so much.");
+        }
+//returns the variable loss
+        return loss;
+    }
+
+//rounds the income and expenses per day and per month using the parameter num
+    public static double round2(double num) {
+//returns the number that is rounded by 2 decimal points
+      return Math.round(num * 100.0) / 100.0;
+   }
+    
+}
