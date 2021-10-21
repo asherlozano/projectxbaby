@@ -1,0 +1,59 @@
+// Asher Lozano
+// 2/19/21
+// CSE 143
+// TA Melody Lam
+import java.util.*;
+
+// This code takes a dictionary of words and looks for anagrams which are words that use the 
+// same letters but spell different words.
+public class AnagramSolver {
+    
+    private Map<String, LetterInventory> words;
+    private List<String> dictionary;
+
+// This is the constructor for AnagramSolver and uses the parameter dictionary
+// The constructor puts the dictionary into a list of words 
+    public AnagramSolver(List<String> dictionary) {
+        this.dictionary = dictionary;
+        words = new HashMap<>();
+        for(String word : dictionary){
+            words.put(word, new LetterInventory(word));
+        }
+
+    }
+
+// This print method uses the parameter text and max. It throws an IllegalArgumentException
+// if the max is less than 0. The text is a word that the user gives to the code
+// The print method creates the words that are anagrams of the text
+    public void print(String text, int max){
+        if (max < 0) {
+            throw new IllegalArgumentException();
+        }
+        Stack<String> stack = new Stack<>();
+        LetterInventory textInventory = new LetterInventory(text);
+        List<String> wordsThatFit = new ArrayList<>();
+        for(String word : dictionary) {
+            if (textInventory.subtract(words.get(word)) != null) {
+                wordsThatFit.add(word);
+            }
+        }
+        print(textInventory, max, stack, wordsThatFit);
+    }
+
+// This print helper method uses the parameters textInventory, max, stack, wordsThatFit. 
+// This method to prints out all the anagrams of the word given.
+    private void print(LetterInventory textInventory, int max, Stack stack, List<String> wordsThatFit){
+        if (textInventory.isEmpty()){
+            System.out.println(stack);
+        }else if (max == 0 || max > stack.size()) {
+            for(String word : wordsThatFit) {
+                LetterInventory newWords = textInventory.subtract(words.get(word));
+                if (newWords != null) {
+                    stack.push(word);
+                    print(newWords, max, stack, wordsThatFit);
+                    stack.pop();
+                }
+            }
+        }
+    }
+}
