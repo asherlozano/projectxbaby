@@ -1,0 +1,81 @@
+// Asher Lozano
+// 1/23/21
+// CSE 143
+// TA Melody Lam
+import java.util.*;
+
+
+// This code represents a random sentence generater, with specific grammar rules. The
+// grammar will be used with a specific format call the Backus-Naur Form (BNF). Terminals are
+// words used to make the sentences and nonterminals are the words like adjective, noun, etc.
+public class GrammarSolver {
+
+
+    private SortedMap<String, String[]> grammarRulesMap;
+
+// This is the GrammarSolver constructor that uses the parameter rules and throws an 
+// IllegalArgumentException if rules is empty or if the list of words contains more than one of 
+// the same non-terminals. The constructor turns the list of rules into a word that are 
+// non-terminals and a list of words that are the terminals
+    public GrammarSolver(List<String> rules) {
+        if (rules.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+
+        grammarRulesMap = new TreeMap<>();
+        for (String rule : rules) {
+            String[] parts = rule.split("::=");
+            String nonTerminal = parts[0];
+            if (grammarRulesMap.containsKey(nonTerminal)) {
+                throw new IllegalArgumentException();
+            }
+            grammarRulesMap.put(nonTerminal, parts[1].split("\\|"));
+        }
+    }
+
+// This method grammarContains uses the parameter symbol and checks if the list of words contains
+// the non-terminals and returns true if it does and false if it does not
+
+    public boolean grammarContains(String symbol) {
+        return grammarRulesMap.containsKey(symbol);
+    }
+
+// This method getSymbols returns a bracketed list, comma-seperated of all the nonterminal words
+
+    public String getSymbols() {
+        return grammarRulesMap.keySet().toString();
+    }
+
+// This method generate uses the parameters symbol and times. If the times is negative or
+// if the symbol is not there it will throw an IllegalArgumentException. 
+// This method creates a random sentence with the given nonterminal symbols and returns the 
+// array of strings
+    public String[] generate(String symbol, int times){
+        if (times < 0 || !grammarRulesMap.containsKey(symbol)) {
+            throw new IllegalArgumentException();
+        }
+        String[] strings = new String[times];
+        Random rand = new Random();
+        for (int i = 0; i < times; i++){
+            strings[i] = generateHelp(symbol, rand);
+        }
+        return strings;
+    }
+
+// This method generateHelp is a method to help generate that uses the parameters symbol and,
+// random and uses recursion to go through all the symbols and create the sentence and then
+// returns the sentence 
+    private String generateHelp(String symbol, Random rand) {
+        if (!grammarRulesMap.containsKey(symbol)) {
+            return symbol;
+        } else {
+            String[] symbols = grammarRulesMap.get(symbol);
+            symbols = symbols[rand.nextInt(symbols.length)].trim().split("\\s+");
+            String sentence = generateHelp(symbols[0], rand);
+            for (int i = 1; i < symbols.length; i++) {
+                sentence += " " + generateHelp(symbols[i], rand);
+            }
+            return sentence;
+        }
+    }
+}
