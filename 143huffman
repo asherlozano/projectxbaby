@@ -1,0 +1,98 @@
+// Asher Lozano
+// 3/1/21
+// CSE 143
+// TA Melody Lam
+
+import java.util.*;
+import java.io.*;
+
+public class HuffmanCode {
+
+    private HuffmanNode overallRoot; // The HuffmanNode Tree
+
+// This is the HuffmanCode constructor and the parameter frequencies is an array and
+// creates HuffmanNodes with the corresponding frequencies using a PriorityQueue to 
+// build the code and create the node tree
+    public HuffmanCode (int[] frequencies) {
+        PriorityQueue<HuffmanNode> organizer = new PriorityQueue<HuffmanNode>();
+        for (int i = 0; i < frequencies.length; i++){
+            if (frequencies[i] != 0) {
+                HuffmanNode newNode = new HuffmanNode(i, frequencies[i]);
+                organizer.add(newNode);
+            }
+        }
+        while (organizer.size() > 1){
+            HuffmanNode node1 = organizer.remove();
+            HuffmanNode node2 = organizer.remove();
+            HuffmanNode node3 = new HuffmanNode(node1, node2, 0, node1.frequency + node2.frequency);
+            organizer.add(node3);
+        }
+        overallRoot = organizer.remove();
+        
+
+    }
+
+// This creates another HuffmanCode object with the scanner input to read a file that is in 
+// standard format and reads the ASCII value and the direction of the code
+    public HuffmanCode (Scanner input) {
+        while(input.hasNextLine()) {
+            int asciiValue = Integer.parseInt(input.nextLine());
+            String code = input.nextLine();
+            overallRoot = HuffmanCodeHelper(asciiValue, code, overallRoot);
+        }
+    }
+
+// This private method helps HuffmanCode with the parameters asciiValue, code, and the root
+// and uses recursion to traverse through the tree to create the asciiValue for the HuffmanNode
+// and return the HuffmanNode if the length of the code is 0 or returns the root or node
+    private HuffmanNode HuffmanCodeHelper (int asciiValue, String code, HuffmanNode root) {
+        if (code.length() == 0) {
+            return new HuffmanNode(asciiValue, 0);
+        }
+        if (root == null) {
+            root = new HuffmanNode(-1, 0);
+        }
+        if (code.charAt(0) == '1') {
+            root.rightNode = HuffmanCodeHelper(asciiValue, code.substring(1), root.rightNode);
+        } else {
+            root.leftNode = HuffmanCodeHelper(asciiValue, code.substring(1), root.leftNode);
+        }
+        return root;
+    }
+
+// The save method uses the parameter PrintStream to output the tree to a saved file
+    public void save(PrintStream output) {
+        saveHelper(overallRoot, output, "");
+    }
+
+// This private method save helper uses the parameters node, output, and direction
+// this turns the current tree into a saved file to compress the data and uses the node
+// to check if its a leaf node and checks if the direction is left it writes a 0 and if its
+// right its a 1 instead
+    private void saveHelper (HuffmanNode node, PrintStream output, String direction) {
+        if (node.leftNode == null && node.rightNode == null){
+            output.println(node.character);
+            output.println(direction);
+        } else {
+            saveHelper(node.leftNode, output, direction + "0");
+            saveHelper(node.rightNode, output, direction + "1");
+        }
+    }
+// The method translate uses the parameters BitInputStream input to read the bits and PrintStream
+// output to the corresponding characters to the output file
+    public void translate(BitInputStream input, PrintStream output) {
+        HuffmanNode node = overallRoot;
+        while (input.hasNextBit()) {
+           int bit = input.nextBit();
+           if (bit == 1) {
+               node = node.rightNode;
+           } else {
+               node = node.leftNode;
+           }
+           if (node.leftNode == null && node.rightNode == null) {
+               output.write(node.character);
+               node = overallRoot;
+           }
+        }
+    }
+}
