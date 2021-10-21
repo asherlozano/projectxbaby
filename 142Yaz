@@ -1,0 +1,149 @@
+//Asher Lozano
+//11/22/2020
+//CSE 142
+//TA: Michelle Jose Morris
+//Take-Home Assessment #7
+
+//Yaz Interpreter asks for an input and output file and uses
+//commands to change the input file with the YazLanguage and produces an output file
+import java.util.*;
+import java.io.*;
+
+public class YazInterpreter {
+    public static void main(String [] args) throws FileNotFoundException {
+        Scanner console = new Scanner(System.in);
+        beginning();
+        System.out.print("(I)nterpret YazLang program, (V)iew output, (Q)uit? ");
+        String userInput = console.nextLine();
+        while (!userInput.equalsIgnoreCase("Q")) {
+            if (userInput.equalsIgnoreCase("V")) {
+                File inputCreate = createInputFile(console);
+                Scanner input = new Scanner(inputCreate);
+                System.out.println();
+                while (input.hasNextLine()) {
+                    String line = input.nextLine();
+                    System.out.println(line);
+                }
+                System.out.println();
+            } else if (userInput.equalsIgnoreCase("I")) {
+                File inputCreate = createInputFile(console);
+                File outputFile = createOutput(console);
+                PrintStream output = new PrintStream(outputFile);
+                Scanner tokens = new Scanner(inputCreate);
+                process(tokens, output);
+                System.out.println("YazLang interpreted and output to a file!");
+                System.out.println();
+
+            }
+            System.out.print("(I)nterpret YazLang program, (V)iew output, (Q)uit? ");
+            userInput = console.nextLine();
+        }
+        
+    }
+
+//This method is the intro to the assessment YazInterpreter
+    public static void beginning () {
+        System.out.println("Welcome to YazInterpreter!");
+        System.out.println("You may interpret a YazLang program and output");
+        System.out.println("the results to a file or view a previously");
+        System.out.println("interpreted YazLang program.");
+        System.out.println();
+    }
+
+
+//This method process will read the command and depending on the command asked
+//will go to the exact method. Using scanner tokens to read the command,
+//and PrintStream to output the method to an output file 
+    public static void process (Scanner tokens, PrintStream output) throws FileNotFoundException {
+        while (tokens.hasNext()) {
+            String command = tokens.next();
+            if (command.startsWith("RANGE")) {
+                rangeCommand(tokens, output);
+            } else if (command.startsWith("CONVERT")) {
+                convertCommand(tokens, output);
+            } else if (command.startsWith("REPEAT")) {
+                repeatCommand(tokens, output);
+            }
+        }
+    }
+
+//This method runs the range command using a Scanner and PrintStream
+//to output to an output file
+    public static void rangeCommand (Scanner tokens, PrintStream output) {
+        String line = tokens.nextLine();
+        Scanner range = new Scanner(line);
+        int arg1 = range.nextInt();
+        int arg2 = range.nextInt();
+        int arg3 = range.nextInt();
+        if (arg1 < arg2) {
+           for (int i = arg1; i < arg2; i += arg3) {
+                output.print(i + " ");
+            } 
+        }
+        output.println();
+    }
+
+//This method converts Farenheit to Celcius and vis versa
+//using the Scanner to read a file and PrintStream to output to a new File
+    public static void convertCommand (Scanner tokens, PrintStream output) {
+        String line = tokens.nextLine();
+        Scanner convert = new Scanner(line);
+        int num = convert.nextInt();
+        String degree = convert.next();
+
+        if (degree.equalsIgnoreCase("F")) {
+            int answer = (int)((num - 32)/1.8);
+            output.println(answer + ("C"));
+        } else if (degree.equalsIgnoreCase("C")) {
+            int answer = (int)(1.8 * num + 32);
+            output.println(answer + ("F"));
+        }
+    }
+
+//This method repeats the string an arbituary number of times using the parameters
+//Scanner to read the file and PrintStream to output to the output file
+    public static void repeatCommand (Scanner tokens, PrintStream output) 
+        throws FileNotFoundException {
+        String line = tokens.nextLine();
+        Scanner repeat = new Scanner(line);
+        while (repeat.hasNext()) {
+            String word = repeat.next();
+            int num = repeat.nextInt();  
+            word = word.replace("_", " ");
+            word = word.substring(1, word.length()-1);      
+            for(int i = 0; i < num; i++) {
+                output.print(word);
+            }
+        }
+        output.println();
+    }
+
+
+//This method create and output file and returns it to main and uses
+//a scanner to read in user input
+    public static File createOutput (Scanner console) {
+        System.out.print("Output file name: ");
+        String outputFile = console.nextLine();
+        File printOutput = new File(outputFile);
+
+//returns the output file to main to use it there
+        return printOutput;
+    }
+
+
+//This method creates an input file and returns it to main and uses the parameter
+//Scanner to read user input
+    public static File createInputFile (Scanner console) {
+        System.out.print("Input file name: ");
+        String inputFile = console.nextLine();
+        File fileInput = new File(inputFile);
+
+        while (!fileInput.exists()) {
+            System.out.print("File not found. Try again: ");
+            String file = console.nextLine();
+            fileInput = new File(file);
+        }
+//returns the input file to catch it in main so I can use it there
+        return fileInput;
+    }
+}
