@@ -1,0 +1,129 @@
+//Asher Lozano
+//11/1/2020
+//CSE 142
+//TA: Michelle Jose Morris
+//Take-Home Assessment #4
+
+//This game's purpose is to guess the right number
+//until you get it correct and you can play as many
+//times as you choose
+
+import java.util.*;
+
+public class GuessingGame {
+    public static final int MAX_VALUE = 100;
+    public static void main(String [] args) {
+        Random rand = new Random();
+        Scanner console = new Scanner(System.in);
+        haiku();
+
+//variable used to keep a count of amount of games played
+        int games = 1;
+    
+//variable used to keep a count of one games' Guesses
+        int gameGuesses = game(rand, console, games);
+
+//variable used to keep a count of total guesses throughout all games
+        int totalGuesses = gameGuesses;
+
+//variable used to keep a total of the best game played with least amount of guesses
+        int bestGame = 1000000;
+        if (gameGuesses < bestGame){
+            bestGame = gameGuesses;
+        }
+
+        System.out.print("Do you want to play again? ");
+        String pick = console.next();
+        char first = pick.toLowerCase().charAt(0);
+        
+        while (first == 'y' || first == 'Y'){
+            System.out.println();
+            gameGuesses = game(rand, console, games);
+
+            //keeps tracks of each amount of guesses per game and adds them to the total
+            totalGuesses += gameGuesses;
+
+            //adds to games played
+            games = games + 1;
+            
+            System.out.print("Do you want to play again? ");
+            pick = console.next();
+            first = pick.toLowerCase().charAt(0);
+
+            if (gameGuesses < bestGame){
+                bestGame = gameGuesses;
+            }
+        }
+        System.out.println();
+        
+        int count = overall(totalGuesses, games, bestGame);
+    }
+
+    //This method plays one game of the guessing game
+    public static int game(Random rand, Scanner console, int games) {
+
+        //prints a random value
+        int num = rand.nextInt(MAX_VALUE) + 1;
+
+        int gameGuesses = 0;
+
+        System.out.println("I'm thinking of a number between 1 and "+ MAX_VALUE + "...");
+
+        System.out.print("Your guess? ");
+        int guess = console.nextInt();
+
+        if (guess > num) {
+            System.out.println("It's lower.");
+            gameGuesses++;
+
+        } else if (guess < num) {
+            System.out.println("It's higher.");
+            gameGuesses++;
+
+        } else {
+            gameGuesses++;
+            System.out.println("You got it right in " + gameGuesses + " guess!");
+            games++;
+        }
+        
+        while (guess != num) {
+
+            System.out.print("Your guess? ");
+            guess = console.nextInt();
+
+            if (guess > num) {
+                System.out.println("It's lower.");
+                gameGuesses++;
+                
+            } else if (guess < num) {
+                System.out.println("It's higher.");
+                gameGuesses++;
+
+            } else if (guess == num) {
+                gameGuesses++;
+                System.out.println("You got it right in " + gameGuesses + " guesses!");
+                games++;
+
+            }
+        }
+        return gameGuesses;
+    }
+
+//This method prints the overall results of ur time playing
+    public static int overall(int totalGuesses, int games, int bestGame){
+        System.out.println("Overall results:");
+        System.out.println("Total games   = " + games);
+        System.out.println("Total guesses = " + totalGuesses);
+        System.out.println("Guesses/game  = " + totalGuesses * 1.0 / games);
+        System.out.println("Best game     = " + bestGame);
+        return totalGuesses;
+    }
+
+//This method print my haiku that I made
+    public static void haiku() {
+        System.out.println("Guess that number right!");
+        System.out.println("If you can guess right you win.");
+        System.out.println("With luck may you win.");
+        System.out.println();
+    }
+}
