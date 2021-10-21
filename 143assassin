@@ -1,0 +1,122 @@
+// Asher Lozano
+// 1/23/21
+// CSE 143
+// TA Melody Lam
+
+// This code models a game called assassin where people are trying to assassinate 
+// their targets and survive from the people targeting them. If they are alive they are in
+// the kill ring if they are dead they are in the graveyard
+import java.util.*;
+
+
+public class AssassinManager {
+
+    private AssassinNode frontKiller;
+    private AssassinNode frontGraveyard;
+
+// This is the AssassinManager constructor that takes a list of names as a parameter
+// and throws an IllegalArgumentException if the list is Empty. The list of
+// names are seperated into individual names
+    public AssassinManager (List<String> names) {
+        if (names.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+        frontKiller = new AssassinNode(names.get(0));
+        AssassinNode name = frontKiller;
+        for (int i = 1; i < names.size(); i++) {
+            name.next = new AssassinNode(names.get(i));
+            name = name.next;
+        }
+    }
+
+// This method prints out who is trying to assassinate who
+    public void printKillRing () {
+        AssassinNode current = frontKiller;
+        while (current.next != null) {
+            System.out.println("    " + current.name + " is stalking " + current.next.name);
+            current = current.next;
+        }
+        System.out.println("    " + current.name + " is stalking " + frontKiller.name);
+    }
+
+// This method prints out who has died and who killed them
+    public void printGraveyard () {
+        AssassinNode current = frontGraveyard;
+        while (current != null) {
+            System.out.println("    " + current.name + " was killed by " + current.killer);
+            current = current.next;
+        }
+
+    }
+
+// This method with the parameter String name returns true if the name is still alive
+// or false if that name is dead or not in the game ignoring the case of the name
+    public boolean killRingContains (String name) {
+        return killRingOrGraveyard(name, frontKiller);
+    }
+
+// This method uses the parameters string name and AssassinNode current. Returns true if the
+// name is still alive or false if that name is dead or not in the game 
+// ignoring the case of the name
+    private boolean killRingOrGraveyard(String name, AssassinNode current) {
+        while (current != null) {
+            if (current.name.equalsIgnoreCase(name)){
+                return true;
+            }
+            
+            current = current.next;
+        }
+        return false;
+    }
+
+// This method uses the parameter String name to check if that current name is dead and returns
+// true if they are or false if they are alive or just not in the graveyard ignoring the case
+// of the name
+    public boolean graveyardContains(String name) {
+        return killRingOrGraveyard(name, frontGraveyard);
+    }
+
+// This method return true if there is only one person left in the game or
+// false otherwise
+    public boolean gameOver () {
+        return (frontKiller != null && frontKiller.next == null);
+    }
+
+// This methods returns null if the game is not over or returns the winners name
+    public String winner () {
+        if (gameOver()) {
+            return frontKiller.name;
+        }
+        return null;
+    }
+
+// This method uses the parameter String name and throws an IllegalStateException if the game
+// is over or/and the given name is not alive. If the given name is not alive or not in the game 
+//then it will just throw an IllegalArgumentException. This method kills the given name and stores
+// the name who killed that person and puts them in the graveyard. This method also ignores the 
+// case of the name
+    public void kill (String name) {
+        if (gameOver()) {
+            throw new IllegalStateException();
+        } else if (!killRingContains(name)) {
+            throw new IllegalArgumentException();
+        }
+
+        AssassinNode current = frontKiller;
+
+        while (current.next != null && !name.equalsIgnoreCase(current.next.name)) {
+            current = current.next;
+        }
+        AssassinNode temp = frontKiller;
+        if (frontKiller.name.equalsIgnoreCase(name)) {
+            frontKiller = temp.next;
+        } else {
+            temp = current.next;
+            current.next = temp.next;
+        }
+        temp.next = frontGraveyard;
+        frontGraveyard = temp;
+        temp.killer = current.name;
+
+    }
+}
