@@ -1,0 +1,105 @@
+// Asher Lozano
+// 1/9/21
+// CSE 143
+// TA Melody Lam
+
+// This code implements the class LetterInventory that keeps track of the inventory
+// of letters from a to z. It computes the count of each letter in the String data and ignores
+// anything that is not a letter. Also, the letters are case-insensitive
+import java.util.*;
+
+public class LetterInventory {
+    public static final int LETTERS = 26;
+
+    private int size;
+    private int[] elementData;
+
+// Creates the LetterInventory with the parameter String data to store that data to
+// elementData ignoring the case of the letters
+    public LetterInventory (String data) {
+        elementData = new int[LETTERS];
+        data = data.toLowerCase();
+        for (int i = 0; i < data.length(); i++) {
+            if (data.charAt(i) >= 'a' && data.charAt(i)<= 'z') {
+                elementData[data.charAt(i) - 'a']++;
+                size++;
+            }
+        }
+    }
+
+// This command uses the parameter letter and counts how much of that letter is in the 
+// LetterInventory and returns the array. Also the method throws an IllegalArgumentException if the char
+// is not a letter from a-z ignoring the case of that letter
+    public int get (char letter) {
+        letter = Character.toLowerCase(letter);
+        if (letter < 'a' || letter > 'z'){
+            throw new IllegalArgumentException();
+        }
+        return elementData[letter - 'a'];        
+    }
+
+// The set command uses the char letter and int value to set the given letter
+// to the given value and throws an IllegalArgumentException if the value is negative
+// or not in the alphabet
+    public void set (char letter, int value) {
+        letter = Character.toLowerCase(letter);
+        if (letter < 'a' || letter > 'z' || value < 0) {  
+            throw new IllegalArgumentException();
+        }
+        int temp = elementData[letter - 'a'];
+        elementData[letter - 'a'] = value;
+        size =  size - temp + value;  
+    }
+
+// The size command returns the exact size of the LetterInventory
+    public int size () {
+        return size;
+    }
+
+// The isEmpty command checks if the size is 0 which is all counts of inventory are 0
+// and returns true and if the counts are more than 0 it returns false
+    public boolean isEmpty () {
+        return (size == 0);
+    }
+
+// The toString command turns the elementData for LetterInventory into a string of
+// all lowercase letters in alphabetical order and the number of occurrences of each letter
+// surrounded by brackets and returns that result
+    public String toString () {
+        String result = "[";
+        for (int i = 0; i < elementData.length; i++) {
+            for (int j = 0; j < elementData[i]; j++) {
+                result += (char)('a' + i);
+            }
+        }
+        result += "]";
+        return result;
+    }
+
+// This method creates a new LetterInventory with the parameter LetterInventory
+// other and creates a newInventory adding each other and then returns the newInventory 
+    public LetterInventory add(LetterInventory other) {
+        LetterInventory newInventory = new LetterInventory("");
+        for (int i = 0; i < LETTERS; i++) {
+            newInventory.elementData[i] = this.elementData[i] + other.elementData[i];
+        }
+        newInventory.size = this.size + other.size;
+        return newInventory;
+    }
+
+// This method creates a new inventory with the parameter LetterInventory other. 
+// Returns null if the data of the first inventory is less than the other 
+// LetterInventory. If not it creates a newInventory subtracting each other and 
+// returns the newInventory
+    public LetterInventory subtract(LetterInventory other) {
+        LetterInventory newInventory = new LetterInventory("");
+        for (int i = 0; i < LETTERS; i++) {
+            if (this.elementData[i] < other.elementData[i]) {
+                return null;
+            }
+            newInventory.elementData[i] = this.elementData[i] - other.elementData[i];
+        }
+        newInventory.size = this.size - other.size;
+        return newInventory;
+    }
+}
