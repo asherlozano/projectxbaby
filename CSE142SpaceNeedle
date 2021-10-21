@@ -1,0 +1,113 @@
+//Asher Lozano
+//10/10/20
+//CSE 142
+//TA: Michelle Jose Morris
+//Take-Home Assessment #2
+
+//This code will reproduce the code of the SpaceNeedle
+//You can change the scale of the SpaceNeedle just by changing the variable
+//SIZE
+public class SpaceNeedle{
+    public static final int SIZE = 4;
+    public static void main(String [] args){
+//draws all of the space needle with the SIZE determining how big
+		drawbase();
+		drawhalfsquare();
+		drawbottomsquare();
+		drawbase();
+		drawbottomlines(); 
+		drawhalfsquare();
+	}
+//draws ||
+//      ||
+	public static void drawbase(){
+//variable linesbase for these lines that are the base
+		for(int linesbase = 1; linesbase <= SIZE; linesbase++){
+//draws spaces x times
+			for(int spacesbase = 1; spacesbase <= SIZE * 3; spacesbase++){
+				System.out.print(" ");
+			}
+//draws ||
+			System.out.println("||");
+		}
+	}
+//draws    __/||\__
+//      __/:::||:::\__
+//      |""""""""""""|
+	public static void drawhalfsquare(){
+//variable for linescolon to create the half square using the colons
+		for(int linescolons = 1; linescolons <= SIZE; linescolons++){
+//draws the spaces x times
+			for(int spacecolon = 1; spacecolon <= (SIZE * 3) - (linescolons * 3); spacecolon++){
+				System.out.print(" ");
+			}
+//draws __/
+			System.out.print("__/");
+//draws the colons or : x times
+			for(int colon = 1; colon <= (linescolons - 1) * 3; colon++){
+				System.out.print(":");
+			}
+//draws ||
+			System.out.print("||");
+//draws the colons or : x times
+			for(int colon = 1; colon <= (linescolons - 1) * 3; colon++){
+					System.out.print(":");
+			}
+//draws \__
+			System.out.println("\\__");
+		}
+//draws |
+			System.out.print("|");
+//draws " x times
+			for(int marks = 1; marks <= SIZE * 6; marks++){
+				System.out.print("\"");
+			}
+//draws |
+				System.out.println("|");
+	}
+//draws \_/\/\/\/\/\_/
+//	      \_/\/\/\_/
+	public static void drawbottomsquare(){
+//variable for these lines that create the v shape
+		for(int linesv = 1; linesv <= SIZE; linesv++){
+//draws the spaces x times
+			for(int spacesv = 1; spacesv <= (linesv - 1) * 2; spacesv++){
+				System.out.print(" ");
+			}
+//draws the shape \_
+			System.out.print("\\_");
+//draws the shape /\ x times
+			for(int v = 1; v <= (SIZE * 3) - 1 - (linesv - 1) * 2; v++){
+				System.out.print("/\\");
+			}
+//draws the shape _/
+			System.out.println("_/");
+		}
+	}
+//draws      ||||
+//           ||||
+//           ||||
+//           ||||
+	public static void drawbottomlines(){
+		for(int linesbase = 1; linesbase <= SIZE * SIZE; linesbase++){
+//draws the spaces x times
+			for(int spacesb = 1; spacesb <= SIZE * 2 + 1; spacesb++){
+				System.out.print(" ");
+			}
+//draws |
+			System.out.print("|");
+//draws the % x times
+			for(int percent = 1; percent <= SIZE - 2; percent++){
+				System.out.print("%");
+			}
+//draws ||
+			System.out.print("||");
+//draws % x times
+			for(int percent = 1; percent <= SIZE - 2; percent++){
+				System.out.print("%");
+			}
+//draws |
+			System.out.println("|");
+		}
+	}
+}		
