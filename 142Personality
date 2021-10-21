@@ -1,0 +1,120 @@
+//Asher Lozano
+//11/20/2020
+//CSE 142
+//TA: Michelle Jose Morris
+//Take-Home Assessment #7
+
+//The personality assessment will read a file and output the names of the people in
+//the file and their personality type bases on their questions and percentage answered
+import java.util.*;
+import java.io.*;
+
+public class Personality {
+    //constant for all the arrays with 4 ints or strings
+    public static final int CONSTANT_AB = 4;
+
+    public static void main(String [] args) throws FileNotFoundException {
+        Scanner console = new Scanner(System.in);
+        intro();
+        System.out.print("input file name? ");
+        String inputFileName = console.nextLine();
+        File inputFile = new File(inputFileName);
+        
+
+        System.out.print("output file name? ");
+        String outputString = console.nextLine();
+        File outputFile = new File(outputString);
+        PrintStream output = new PrintStream(outputFile);
+
+        Scanner input = new Scanner(inputFile);
+        while (input.hasNextLine()){
+            //Array A counts the amount of A's 
+            int a [] = new int [CONSTANT_AB];
+            //Array B counts the amount of B's
+            int b [] = new int [CONSTANT_AB];
+            String name = input.nextLine();
+            String lineAB = input.nextLine();
+            countAsAndBs (a, b, lineAB);
+            int bPercent [] = bPercentage(output, a, b, name);
+            personalityType(bPercent, output);
+        }
+    }
+
+//Creates the introduction of the program for personality test
+    public static void intro() {
+        System.out.println("This program processes a file of answers to the");
+        System.out.println("Keirsey Temperament Sorter. It converts the");
+        System.out.println("various A and B answers for each person into");
+        System.out.println("a sequence of B-percentages and then into a");
+        System.out.println("four-letter personality type.");
+        System.out.println();
+    }
+
+//This methods uses the parameters, arrays a and b and int arrayIndex for the index of the arrays
+//and the character current to read the current character to check if it is A or B
+    public static void algorithm (int a [], int b [], int arrayIndex, char current) {
+        if (current == 'A' || current == 'a') {
+            a[arrayIndex]++;
+        } else if (current == 'B' || current == 'b') {
+            b[arrayIndex]++;
+        }
+    }
+
+//This method counts the A's and B's on each line and uses the parameters of the
+//A and B arrays to store the values and uses the string lineAB to read the line from the file
+    public static void countAsAndBs (int a [], int b [], String lineAB) {
+        for (int i = 0; i < lineAB.length(); i++) {
+            char current = lineAB.charAt(i);
+            // groups questions 1 , 8, 15
+            if (i % 7 == 0) {
+                algorithm(a, b, 0, current);
+            //groups question 2, 3, 9 , 10
+            } else if ((i % 7 == 1 ) || (i % 7 == 2)){
+                algorithm(a, b, 1, current);
+            //group question 4, 5, 12, 13
+            } else if ((i % 7 == 3) || (i % 7 == 4)) {
+                algorithm(a, b, 2, current);
+            //groups question 6, 7, 13, 14
+            } else {
+                algorithm(a, b, 3, current);
+            }
+        }
+    }
+    
+//This method personality type uses the parameters array bPercent to convert each index of bPercent
+//to the right personality type and PrintStream to output to the user chosen file
+    public static void personalityType(int bPercent [], PrintStream output) {
+        //Array typeA is for if the bPercent is greater than 50
+        char [] typeA = {'I', 'N', 'F', 'P'};
+        
+        //Array typeB is for if bPercent is less than 50
+        char [] typeB = {'E', 'S', 'T', 'J'};
+
+        String finalPersonality = "";
+        for (int i = 0; i < bPercent.length; i++) {
+            if (bPercent [i] > 50) {
+                finalPersonality += typeA[i];
+            } else if (bPercent [i] < 50) {
+                finalPersonality += typeB[i];
+            } else {
+                finalPersonality += 'X';
+            } 
+        }
+        output.print(finalPersonality);
+        output.println();
+    }
+
+//This method calculates the bPercentage and uses the parameters
+//printstream to print to the output file the array A and B
+//and uses the name of each person
+    public static int [] bPercentage (PrintStream output, int a [], int b [], String name) {
+        int bPercent [] = new int [CONSTANT_AB];
+        for (int i = 0; i < bPercent.length; i++) {
+            bPercent [i] = (int)Math.round((100 * ((double) b [i]) / (double)(a[i] + b[i])));
+        }
+        output.print(name + ": " + Arrays.toString(bPercent) + " = ");
+
+        //returns bPercent so I am able to pass it as a parameter into other methods
+        return bPercent;
+    }
+}
