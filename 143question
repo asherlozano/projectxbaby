@@ -1,0 +1,116 @@
+import java.util.*;
+import java.io.*;
+
+// Asher Lozano
+// 3/1/21
+// CSE 143
+// TA Melody Lam
+
+// This is the QuestionsGame that the computer tries to guess your object you choose
+// It is a game like 20 questions but can have an infinite amount of questions. If the computer
+// loses it will add a new object and new question for that object
+public class QuestionsGame {
+
+    private QuestionNode overallRoot; // This field is the total tree
+    private Scanner console; // This field is used to prompt the player to type answers
+
+// This constructor initializes QuestionsGame object with a leaf node representing “computer”
+    public QuestionsGame() {
+        overallRoot = new QuestionNode("computer");
+        console = new Scanner(System.in);
+    }
+
+// This method read uses the parameter Scanner input and it is a file and replaces the old tree
+// with the new tree with the file that is in preorder format
+    public void read(Scanner input) {
+        overallRoot = readHelper(input);
+    }
+
+// This private method readHelper uses the parameter Scanner input and returns a questionNode 
+// This method goes through the files and determines whether it is a question or answer and 
+// return a questionNode answer or questionNode question
+    private QuestionNode readHelper (Scanner input) {
+        String name = input.nextLine();
+        String data = input.nextLine();
+        QuestionNode node = new QuestionNode(data);
+        if (name.contains("Q:")) {
+            node.yesNode = readHelper(input);
+            node.noNode = readHelper(input);
+        }
+        return node;
+
+    }
+
+//This meethod write uses the parameter PrintStream output to store the tree to an output files
+// to use questions and answers from another game using the format preorder
+    public void write(PrintStream output) {
+        writeHelper(overallRoot, output);
+    }
+
+// This private method writeHelper uses the parameters QuestionNode node, and PrintStream output
+// if it is a question it will output to the file the correct format and if it is an answer
+// it prints out the answer and the correct format
+    private void writeHelper(QuestionNode node, PrintStream output) {
+        if (node.isQuestion()) {
+            output.println("Q:");
+            output.println(node.questionOrObject);
+            writeHelper(node.yesNode, output);
+            writeHelper(node.noNode, output);
+        } else {
+            output.println("A:");
+            output.println(node.questionOrObject);
+        }
+    }
+
+// This method askQuestions to complete and entire game until the computer wins or guesses wrong
+// if the computer loses it will prompt the user some questions about their object 
+// and another object that the computer is now able to guess
+    public void askQuestions() {
+        overallRoot = askHelper(overallRoot);
+    }
+
+// This private method askHelper uses the parameter QuestionNode node and returns the node 
+// if it is a question or if the computer won or it will return the new object that you chose
+// called questionNode. This method also prompts the user if the computer won or prompts some
+// questions about the object that the computer couldnt guess.
+    private QuestionNode askHelper (QuestionNode node) {
+        if (node.isQuestion()) {
+            if (yesTo(node.questionOrObject)) {
+                node.yesNode = askHelper(node.yesNode);
+            } else {
+                node.noNode = askHelper(node.noNode);
+            }
+        } else {
+            if(yesTo("Would your object happen to be " + node.questionOrObject + "?")){
+                System.out.println("Great, I got it right!");
+            } else {
+                System.out.print("What is the name of your object? ");
+                QuestionNode object = new QuestionNode(console.nextLine());
+                System.out.println("Please give me a yes/no question that");
+                System.out.println("distinguishes between your object");
+                System.out.print("and mine--> ");
+                String question = console.nextLine();
+                if (yesTo("And what is the answer for your object?")) {
+                    node = new QuestionNode(object, node, question);
+                } else {
+                    node = new QuestionNode(node, object, question);
+                }
+            }
+        }
+        return node;
+    }
+
+    // Do not modify this method in any way
+    // post: asks the user a question, forcing an answer of "y" or "n";
+    //       returns true if the answer was yes, returns false otherwise
+    public boolean yesTo(String prompt) {
+        System.out.print(prompt + " (y/n)? ");
+        String response = console.nextLine().trim().toLowerCase();
+        while (!response.equals("y") && !response.equals("n")) {
+            System.out.println("Please answer y or n.");
+            System.out.print(prompt + " (y/n)? ");
+            response = console.nextLine().trim().toLowerCase();
+        }
+        return response.equals("y");
+    }
+}
